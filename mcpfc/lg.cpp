@@ -52,7 +52,7 @@ void Display::BuildFont(){
 void Display::glPrint(const char *text){
   if(text == NULL){
     return;
-  } 
+  }
   glPushAttrib(GL_LIST_BIT);
   glListBase(m_base - 32);
   glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);
@@ -65,7 +65,7 @@ void Display::setUpTexture(){
   glBindTexture( GL_TEXTURE_RECTANGLE_NV, m_texture[0]);
   glTexParameteri(GL_TEXTURE_RECTANGLE_NV,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
   glTexParameteri(GL_TEXTURE_RECTANGLE_NV,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
-  // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image, 
+  // 2d texture, level of detail 0 (normal), 3 components (red, green, blue), x size from image, y size from image,
   // border 0 (normal), rgb color data, unsigned byte data, and finally the data itself.
   glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 4, m_tWidth, m_tHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_tData);
 }
@@ -88,9 +88,9 @@ void Display::DrawGLScene(){
     double value = dom[i];
     double r, g, b;
     doubleToRGB(r, g, b, value, min, max);
-    m_tData[j] = 256 * r;
-    m_tData[j + 1] = 256 * g;
-    m_tData[j + 2] = 256 * b;
+    m_tData[j] = 255 * r;
+    m_tData[j + 1] = 255 * g;
+    m_tData[j + 2] = 255 * b;
   }
   // for(int ro = 0; ro < m_scale; ro++){
   //   for(int co = 0; co < m_scale; co++){
@@ -107,7 +107,7 @@ void Display::DrawGLScene(){
   // glTexCoord2f( m_tWidth, m_tHeight); glVertex2f( 1, -1);
   // glTexCoord2f( m_tWidth, 0); glVertex2f( 1, 1);
   // glTexCoord2f( 0, 0); glVertex2f( -1, 1);
-  
+
   // origo: bottom-left
   glTexCoord2i( 0, 0); glVertex2i( -1, -1);
   glTexCoord2i( m_tWidth, 0); glVertex2i( 1, -1);
@@ -122,7 +122,7 @@ void Display::DrawGLScene(){
   glDisable(GL_TEXTURE_RECTANGLE_NV);
   glPushAttrib(GL_CURRENT_BIT);
   //  glColor3f(0.0,0.0,1.0);
-  glColor3f(0.0,0.0,0.0);
+  glColor3f(1.0,1.0,1.0);
   glRasterPos2f(-0.95,-0.95);
   glPrint(text);
   // int i=0;
@@ -165,7 +165,7 @@ void Display::keyPressed(unsigned char key, int x, int y){
   //  printf("key: %d\n", key);
   switch(key){
   case m_escape:
-    glutDestroyWindow(m_window); 
+    glutDestroyWindow(m_window);
     exit(0);
     break;
   case 's':
@@ -189,7 +189,7 @@ void Display::mouseAction(int button, int state, int x, int y){
 }
 
 void Display::setUpOpenGL(){
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);  
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA);
   glutInitWindowSize(m_tWidth, m_tHeight);
   glutInitWindowPosition(0, 0);
   m_window = glutCreateWindow("MC");
@@ -225,7 +225,7 @@ Display::Display(int* argcp, char** argv, int width, int height){
   m_tElements = m_tWidth * m_tHeight;
   m_tData = new unsigned char [4 * m_tElements];
 
-  glutInit(argcp, argv);  
+  glutInit(argcp, argv);
   setUpOpenGL();
 }
 
@@ -250,7 +250,7 @@ Simulation::Simulation(int divs, double size, double prob, bool novis, double te
   srand(time(NULL));
 
   int elements = m_width * m_height;
-  
+
   m_varPsiPrim = new double[elements];
   m_varPsiSec = new double[elements];
   m_varLapPsi = new double[elements];
@@ -271,7 +271,7 @@ Simulation::Simulation(int divs, double size, double prob, bool novis, double te
   int lstate = 633; // genid == 3; MT lstate >= 633
   int lseed = 1; //only 1 i supplied, others generated
   m_state = new int[lstate];
-  drandinitialize(genid, subid, seed, &lseed, m_state, &lstate, &m_info);
+  // drandinitialize(genid, subid, seed, &lseed, m_state, &lstate, &m_info);
   if(m_info != 0) printf("prng was not initialized successfully\n");
 }
 
@@ -286,8 +286,8 @@ Simulation::~Simulation(){
 }
 
 void printTime(timeval startTime, timeval endTime){
-  printf("%d", (int)(((endTime.tv_sec  - startTime.tv_sec) * 1000 
-                      + (endTime.tv_usec - startTime.tv_usec)/1000.0) 
+  printf("%d", (int)(((endTime.tv_sec  - startTime.tv_sec) * 1000
+                      + (endTime.tv_usec - startTime.tv_usec)/1000.0)
                      + 0.5));
 }
 
@@ -400,9 +400,12 @@ void Simulation::run(){
       rho /= (m_height * m_width);
       printf("sweep: %d, avg.Psi: %.5f\n",ctr,rho);
     }
+    /*
     if(ctr % 100 == 0){
       saveToFile();
     }
+    */
+
     //    }
     // ctr++;
     // if(ctr % 10 == 0){
@@ -423,9 +426,13 @@ void Simulation::run(){
     //   }
     // }
 
-    dranduniform(m_width * m_height, 0.0, 1.0, m_state, pick, &m_info);
+    //dranduniform(m_width * m_height, 0.0, 1.0, m_state, pick, &m_info);
     //    dranduniform(m_width * m_height, 0.0, 1.0, m_state, choose, &m_info);
-    dranduniform(m_width * m_height, 0.0, 1.0, m_state, sign, &m_info);
+    //dranduniform(m_width * m_height, 0.0, 1.0, m_state, sign, &m_info);
+    for(int i = 0; i < m_width * m_height; i++){
+        pick[i] = rand() / (double)RAND_MAX;
+        sign[i] = rand() / (double)RAND_MAX;
+    }
 
     // CORRECT
     // double p4 = exp(- 4.0 / m_tempK);
@@ -463,7 +470,7 @@ void Simulation::run(){
         m_varPsiPrim[rp * m_width + cm] +
         m_varPsiPrim[rm * m_width + cp] +
         m_varPsiPrim[rm * m_width + cm];
-  
+
       double nsum3=
         m_varPsiPrim[rpp * m_width + c] +
         m_varPsiPrim[rmm * m_width + c] +
@@ -482,7 +489,7 @@ void Simulation::run(){
       dE *= dh2;
 
       double newPsiPrime = oldPsi;
-      
+
       if(dE <= 0.0){
         newPsiPrime = newPsi;
       }else{

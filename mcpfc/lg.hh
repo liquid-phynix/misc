@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include <csignal>
-#include <acml.h>
+//#include <acml.h>
 
 namespace GLX{
 #include <GL/glx.h>
